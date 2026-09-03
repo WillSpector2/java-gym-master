@@ -4,12 +4,26 @@ import java.util.*;
 
 public class Timetable {
 
-    private Map<DayOfWeek, TreeMap<TimeOfDay, List<TrainingSession>>> timetable =
+    private final Map<DayOfWeek, List<TrainingSession>> sessionsByDay =
+            new HashMap<>();
+
+    private final Map<DayOfWeek, TreeMap<TimeOfDay, List<TrainingSession>>> timetable =
             new HashMap<>();
 
     public void addNewTrainingSession(TrainingSession trainingSession) {
         DayOfWeek day = trainingSession.getDayOfWeek();
         TimeOfDay time = trainingSession.getTimeOfDay();
+
+        List<TrainingSession> daySessions =
+                sessionsByDay.computeIfAbsent(day, key -> new ArrayList<>());
+
+        int index = 0;
+        while (index < daySessions.size()
+                && daySessions.get(index).getTimeOfDay().compareTo(time) <= 0) {
+            index++;
+        }
+
+        daySessions.add(index, trainingSession);
 
         TreeMap<TimeOfDay, List<TrainingSession>> daySchedule =
                 timetable.computeIfAbsent(day, key -> new TreeMap<>());
@@ -21,26 +35,21 @@ public class Timetable {
     }
 
     public List<TrainingSession> getTrainingSessionsForDay(DayOfWeek dayOfWeek) {
-        TreeMap<TimeOfDay, List<TrainingSession>> daySchedule = timetable.get(dayOfWeek);
+        List<TrainingSession> sessions = sessionsByDay.get(dayOfWeek);
 
-        if (daySchedule == null) {
+        if (sessions == null) {
             return new ArrayList<>();
         }
 
-        List<TrainingSession> result = new ArrayList<>();
-
-        for (List<TrainingSession> sessions : daySchedule.values()) {
-            result.addAll(sessions);
-        }
-
-        return result;
+        return sessions;
     }
 
     public List<TrainingSession> getTrainingSessionsForDayAndTime(
             DayOfWeek dayOfWeek,
             TimeOfDay timeOfDay) {
 
-        TreeMap<TimeOfDay, List<TrainingSession>> daySchedule = timetable.get(dayOfWeek);
+        TreeMap<TimeOfDay, List<TrainingSession>> daySchedule =
+                timetable.get(dayOfWeek);
 
         if (daySchedule == null) {
             return new ArrayList<>();
@@ -52,15 +61,13 @@ public class Timetable {
             return new ArrayList<>();
         }
 
-        return new ArrayList<>(sessions);
+        return sessions;
     }
 
     public List<CounterOfTrainings> getCountByCoaches() {
         Map<Coach, Integer> counters = new HashMap<>();
 
-        for (DayOfWeek day : DayOfWeek.values()) {
-            List<TrainingSession> sessions = getTrainingSessionsForDay(day);
-
+        for (List<TrainingSession> sessions : sessionsByDay.values()) {
             for (TrainingSession session : sessions) {
                 Coach coach = session.getCoach();
 

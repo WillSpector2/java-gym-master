@@ -3,7 +3,7 @@ package ru.yandex.practicum.gym;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.util.*;
+import java.util.List;
 
 public class TimetableTest {
 
@@ -31,7 +31,6 @@ public class TimetableTest {
 
         Assertions.assertEquals(1, mondaySessions.size());
         Assertions.assertEquals(trainingSession, mondaySessions.get(0));
-
         Assertions.assertTrue(tuesdaySessions.isEmpty());
     }
 
@@ -39,7 +38,11 @@ public class TimetableTest {
     void testGetTrainingSessionsForDayMultipleSessions() {
         Timetable timetable = new Timetable();
 
-        Coach coach = new Coach("Васильев", "Николай", "Сергеевич");
+        Coach coach = new Coach(
+                "Васильев",
+                "Николай",
+                "Сергеевич"
+        );
 
         Group groupAdult = new Group(
                 "Акробатика для взрослых",
@@ -54,8 +57,6 @@ public class TimetableTest {
                         DayOfWeek.THURSDAY,
                         new TimeOfDay(20, 0)
                 );
-
-        timetable.addNewTrainingSession(thursdayAdultTrainingSession);
 
         Group groupChild = new Group(
                 "Акробатика для детей",
@@ -87,6 +88,7 @@ public class TimetableTest {
                         new TimeOfDay(10, 0)
                 );
 
+        timetable.addNewTrainingSession(thursdayAdultTrainingSession);
         timetable.addNewTrainingSession(mondayChildTrainingSession);
         timetable.addNewTrainingSession(thursdayChildTrainingSession);
         timetable.addNewTrainingSession(saturdayChildTrainingSession);
@@ -158,12 +160,22 @@ public class TimetableTest {
 
         Assertions.assertTrue(sessionsAt14.isEmpty());
     }
+
     @Test
     void testGetCountByCoachesOneCoach() {
         Timetable timetable = new Timetable();
 
-        Coach coach = new Coach("Васильев", "Николай", "Сергеевич");
-        Group group = new Group("Акробатика", Age.CHILD, 60);
+        Coach coach = new Coach(
+                "Васильев",
+                "Николай",
+                "Сергеевич"
+        );
+
+        Group group = new Group(
+                "Акробатика",
+                Age.CHILD,
+                60
+        );
 
         timetable.addNewTrainingSession(
                 new TrainingSession(
@@ -183,7 +195,8 @@ public class TimetableTest {
                 )
         );
 
-        List<CounterOfTrainings> result = timetable.getCountByCoaches();
+        List<CounterOfTrainings> result =
+                timetable.getCountByCoaches();
 
         Assertions.assertEquals(1, result.size());
         Assertions.assertEquals(coach, result.get(0).getCoach());
@@ -194,10 +207,23 @@ public class TimetableTest {
     void testGetCountByCoachesSeveralCoaches() {
         Timetable timetable = new Timetable();
 
-        Coach coachOne = new Coach("Васильев", "Николай", "Сергеевич");
-        Coach coachTwo = new Coach("Петров", "Иван", "Александрович");
+        Coach coachOne = new Coach(
+                "Васильев",
+                "Николай",
+                "Сергеевич"
+        );
 
-        Group group = new Group("Акробатика", Age.CHILD, 60);
+        Coach coachTwo = new Coach(
+                "Петров",
+                "Иван",
+                "Александрович"
+        );
+
+        Group group = new Group(
+                "Акробатика",
+                Age.CHILD,
+                60
+        );
 
         timetable.addNewTrainingSession(
                 new TrainingSession(
@@ -235,11 +261,11 @@ public class TimetableTest {
                 )
         );
 
-        List<CounterOfTrainings> result = timetable.getCountByCoaches();
+        List<CounterOfTrainings> result =
+                timetable.getCountByCoaches();
 
         Assertions.assertEquals(2, result.size());
 
-        // Тренер с большим количеством тренировок должен быть первым
         Assertions.assertEquals(coachOne, result.get(0).getCoach());
         Assertions.assertEquals(3, result.get(0).getCount());
 
@@ -251,11 +277,29 @@ public class TimetableTest {
     void testGetCountByCoachesSortedDescending() {
         Timetable timetable = new Timetable();
 
-        Coach coachOne = new Coach("Васильев", "Николай", "Сергеевич");
-        Coach coachTwo = new Coach("Петров", "Иван", "Александрович");
-        Coach coachThree = new Coach("Сидоров", "Алексей", "Игоревич");
+        Coach coachOne = new Coach(
+                "Васильев",
+                "Николай",
+                "Сергеевич"
+        );
 
-        Group group = new Group("Акробатика", Age.CHILD, 60);
+        Coach coachTwo = new Coach(
+                "Петров",
+                "Иван",
+                "Александрович"
+        );
+
+        Coach coachThree = new Coach(
+                "Сидоров",
+                "Алексей",
+                "Игоревич"
+        );
+
+        Group group = new Group(
+                "Акробатика",
+                Age.CHILD,
+                60
+        );
 
         // coachOne — 2 тренировки
         timetable.addNewTrainingSession(
@@ -323,7 +367,8 @@ public class TimetableTest {
                 )
         );
 
-        List<CounterOfTrainings> result = timetable.getCountByCoaches();
+        List<CounterOfTrainings> result =
+                timetable.getCountByCoaches();
 
         Assertions.assertEquals(3, result.size());
 
